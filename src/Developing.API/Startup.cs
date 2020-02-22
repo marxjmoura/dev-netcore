@@ -1,3 +1,4 @@
+using Developing.API.Authorization;
 using Developing.API.Filters;
 using Developing.API.Infrastructure.Database.DataModel;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +34,8 @@ namespace Developing.API
                 options.Filters.Add(new RequestValidationFilter());
             })
             .AddNewtonsoftJson();
+
+            services.AddDefaultCorsPolicy();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,6 +45,7 @@ namespace Developing.API
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors();
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
