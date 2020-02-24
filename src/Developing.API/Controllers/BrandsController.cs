@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Developing.API.Infrastructure.Database.DataModel;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
+using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Models.Brands;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -102,6 +103,15 @@ namespace Developing.API.Controllers
             if (brand == null)
             {
                 return new BrandNotFoundError();
+            }
+
+            var hasModels = await _dbContext.Models
+                .WhereBrandId(id)
+                .AnyAsync();
+
+            if (hasModels)
+            {
+                return new BrandHasModelsError();
             }
 
             _dbContext.Brands.Remove(brand);
