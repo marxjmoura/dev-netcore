@@ -1,4 +1,5 @@
 using Developing.API.Infrastructure.Database.DataModel.Brands;
+using Developing.API.Infrastructure.Database.DataModel.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Developing.API.Infrastructure.Database.DataModel
@@ -10,12 +11,14 @@ namespace Developing.API.Infrastructure.Database.DataModel
         public ApiDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<Model> Models { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(Schema);
 
             modelBuilder.Entity<Brand>().Configure();
+            modelBuilder.Entity<Model>().Configure();
         }
     }
 }
