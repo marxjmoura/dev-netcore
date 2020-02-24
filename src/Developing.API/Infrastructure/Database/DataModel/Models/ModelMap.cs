@@ -28,6 +28,11 @@ namespace Developing.API.Infrastructure.Database.DataModel.Models
                 .HasColumnName("name")
                 .HasMaxLength(80)
                 .IsRequired();
+
+            model.HasMany(p => p.Vehicles)
+                .WithOne(p => p.Model)
+                .HasForeignKey(p => p.ModelId)
+                .HasConstraintName("fk_vehicle__model");
         }
     }
 }
