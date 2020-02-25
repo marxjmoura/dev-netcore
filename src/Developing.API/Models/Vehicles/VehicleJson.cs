@@ -16,8 +16,13 @@ namespace Developing.API.Models.Vehicles
             Fuel = vehicle.Fuel;
             Brand = vehicle.Model.Brand.Name;
             Model = vehicle.Model.Name;
-            Value = vehicle.Value.ToString("C", CultureInfo.GetCultureInfo("pt-BR"));
             RawValue = vehicle.Value;
+
+            Value = vehicle.Value.ToString("R$ #,##0.00", new NumberFormatInfo
+            {
+                NumberGroupSeparator = ".",
+                NumberDecimalSeparator = ","
+            });
         }
 
         public int Id { get; set; }
