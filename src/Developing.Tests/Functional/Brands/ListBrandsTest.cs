@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Developing.Tests.Functional.Brands
 {
-    public sealed class ListBrandTest
+    public sealed class ListBrandsTest
     {
         private readonly FakeApiServer _server;
 
-        public ListBrandTest()
+        public ListBrandsTest()
         {
             _server = new FakeApiServer();
         }

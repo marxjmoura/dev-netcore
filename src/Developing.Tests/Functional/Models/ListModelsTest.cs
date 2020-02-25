@@ -11,11 +11,11 @@ using Xunit;
 
 namespace Developing.Tests.Functional.Models
 {
-    public sealed class ListModelTest
+    public sealed class ListModelsTest
     {
         private readonly FakeApiServer _server;
 
-        public ListModelTest()
+        public ListModelsTest()
         {
             _server = new FakeApiServer();
         }
