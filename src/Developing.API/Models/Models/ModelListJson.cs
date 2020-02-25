@@ -10,8 +10,6 @@ namespace Developing.API.Models.Models
     {
         private readonly IEnumerable<ModelJson> _models;
 
-        public ModelListJson() { }
-
         public ModelListJson(IEnumerable<Model> models)
         {
             _models = models

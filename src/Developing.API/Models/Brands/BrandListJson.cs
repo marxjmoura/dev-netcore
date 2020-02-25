@@ -10,8 +10,6 @@ namespace Developing.API.Models.Brands
     {
         private readonly IEnumerable<BrandJson> _brands;
 
-        public BrandListJson() { }
-
         public BrandListJson(IEnumerable<Brand> brands)
         {
             _brands = brands
