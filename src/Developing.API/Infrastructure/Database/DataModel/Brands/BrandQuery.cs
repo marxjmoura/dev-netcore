@@ -4,24 +4,24 @@ namespace Developing.API.Infrastructure.Database.DataModel.Brands
 {
     public static class BrandQuery
     {
-        public static IQueryable<Brand> OrderByName(this IQueryable<Brand> query)
+        public static IQueryable<Brand> OrderByName(this IQueryable<Brand> brands)
         {
-            return query.OrderBy(brand => brand.Name);
+            return brands.OrderBy(brand => brand.Name);
         }
 
-        public static IQueryable<Brand> WhereId(this IQueryable<Brand> query, int id)
+        public static IQueryable<Brand> WhereId(this IQueryable<Brand> brands, int id)
         {
-            return query.Where(brand => brand.Id == id);
+            return brands.Where(brand => brand.Id == id);
         }
 
-        public static IQueryable<Brand> WhereIdNotEqual(this IQueryable<Brand> query, int id)
+        public static IQueryable<Brand> WhereIdNotEqual(this IQueryable<Brand> brands, int id)
         {
-            return query.Where(brand => brand.Id != id);
+            return brands.Where(brand => brand.Id != id);
         }
 
-        public static IQueryable<Brand> WhereNameEqual(this IQueryable<Brand> query, string name)
+        public static IQueryable<Brand> WhereNameEqual(this IQueryable<Brand> brands, string name)
         {
-            return query.Where(brand => brand.Name == name);
+            return brands.Where(brand => brand.Name == name);
         }
     }
 }

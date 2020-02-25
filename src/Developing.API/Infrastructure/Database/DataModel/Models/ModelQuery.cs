@@ -4,34 +4,34 @@ namespace Developing.API.Infrastructure.Database.DataModel.Models
 {
     public static class ModelQuery
     {
-        public static IQueryable<Model> OrderByName(this IQueryable<Model> query)
+        public static IQueryable<Model> OrderByName(this IQueryable<Model> models)
         {
-            return query.OrderBy(model => model.Name);
+            return models.OrderBy(model => model.Name);
         }
 
-        public static IQueryable<Model> WhereId(this IQueryable<Model> query, int id)
+        public static IQueryable<Model> WhereId(this IQueryable<Model> models, int id)
         {
-            return query.Where(model => model.Id == id);
+            return models.Where(model => model.Id == id);
         }
 
-        public static IQueryable<Model> WhereBrandId(this IQueryable<Model> query, int? brandId)
+        public static IQueryable<Model> WhereBrandId(this IQueryable<Model> models, int? brandId)
         {
             if (brandId == null)
             {
-                return query;
+                return models;
             }
 
-            return query.Where(model => model.BrandId == brandId);
+            return models.Where(model => model.BrandId == brandId);
         }
 
-        public static IQueryable<Model> WhereIdNotEqual(this IQueryable<Model> query, int id)
+        public static IQueryable<Model> WhereIdNotEqual(this IQueryable<Model> models, int id)
         {
-            return query.Where(model => model.Id != id);
+            return models.Where(model => model.Id != id);
         }
 
-        public static IQueryable<Model> WhereNameEqual(this IQueryable<Model> query, string name)
+        public static IQueryable<Model> WhereNameEqual(this IQueryable<Model> models, string name)
         {
-            return query.Where(model => model.Name == name);
+            return models.Where(model => model.Name == name);
         }
     }
 }
