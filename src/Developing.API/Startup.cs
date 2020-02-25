@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Developing.API.Authorization;
 using Developing.API.Filters;
 using Developing.API.Infrastructure.Database.DataModel;
@@ -10,7 +11,8 @@ using Microsoft.Extensions.Hosting;
 
 namespace Developing.API
 {
-    public class Startup
+    [ExcludeFromCodeCoverage]
+    public sealed class Startup
     {
         public readonly IConfiguration _configuration;
 
