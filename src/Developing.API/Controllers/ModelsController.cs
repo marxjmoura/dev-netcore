@@ -25,6 +25,7 @@ namespace Developing.API.Controllers
         {
             var model = await _dbContext.Models
                 .WhereId(id)
+                .IncludeBrand()
                 .SingleOrDefaultAsync();
 
             if (model == null)
@@ -41,6 +42,7 @@ namespace Developing.API.Controllers
             var models = await _dbContext.Models
                 .WhereBrandId(query.BrandId)
                 .OrderByName()
+                .IncludeBrand()
                 .ToListAsync();
 
             return new ModelListJson(models);

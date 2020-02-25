@@ -1,9 +1,15 @@
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Developing.API.Infrastructure.Database.DataModel.Models
 {
     public static class ModelQuery
     {
+        public static IQueryable<Model> IncludeBrand(this IQueryable<Model> models)
+        {
+            return models.Include(model => model.Brand);
+        }
+
         public static IQueryable<Model> OrderByName(this IQueryable<Model> models)
         {
             return models.OrderBy(model => model.Name);
