@@ -39,6 +39,25 @@ namespace Developing.Tests.Functional.Brands
         }
 
         [Fact]
+        public async Task ShouldRespond422ForDuplicateName()
+        {
+            var brand1 = new Brand().Build();
+            var brand2 = new Brand().Build();
+
+            _server.Database.Brands.AddRange(brand1, brand2);
+            await _server.Database.SaveChangesAsync();
+
+            var path = $"/brands/{brand1.Id}";
+            var jsonRequest = new SaveBrandJson().WithName(brand2.Name);
+            var client = new FakeApiClient(_server);
+            var response = await client.PutJsonAsync(path, jsonRequest);
+            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+
+            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+            Assert.Equal("DUPLICATE_BRAND_NAME", jsonResponse.Error);
+        }
+
+        [Fact]
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/brands/1";

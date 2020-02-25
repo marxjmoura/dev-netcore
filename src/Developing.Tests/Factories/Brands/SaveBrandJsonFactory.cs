@@ -10,5 +10,12 @@ namespace Developing.Tests.Factories.Brands
 
             return json;
         }
+
+        public static SaveBrandJson WithName(this SaveBrandJson json, string name)
+        {
+            json.Name = name;
+
+            return json;
+        }
     }
 }

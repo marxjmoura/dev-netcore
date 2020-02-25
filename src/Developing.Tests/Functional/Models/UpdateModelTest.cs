@@ -45,6 +45,50 @@ namespace Developing.Tests.Functional.Models
         }
 
         [Fact]
+        public async Task ShouldRespond422ForDuplicateName()
+        {
+            var brand = new Brand().Build();
+            var model1 = new Model().To(brand);
+            var model2 = new Model().To(brand);
+
+            _server.Database.Brands.Add(brand);
+            _server.Database.Models.AddRange(model1, model2);
+
+            await _server.Database.SaveChangesAsync();
+
+            var path = $"/models/{model1.Id}";
+            var jsonRequest = new SaveModelJson().To(brand).WithName(model2.Name);
+            var client = new FakeApiClient(_server);
+            var response = await client.PutJsonAsync(path, jsonRequest);
+            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+
+            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+            Assert.Equal("DUPLICATE_MODEL_NAME", jsonResponse.Error);
+        }
+
+        [Fact]
+        public async Task ShouldRespond404ForInexistentBrandId()
+        {
+            var brand = new Brand().Build();
+            var unsavedBrand = new Brand { Id = 9 };
+            var model = new Model().To(brand);
+
+            _server.Database.Brands.Add(brand);
+            _server.Database.Models.Add(model);
+
+            await _server.Database.SaveChangesAsync();
+
+            var path = $"/models/{model.Id}";
+            var jsonRequest = new SaveModelJson().To(unsavedBrand);
+            var client = new FakeApiClient(_server);
+            var response = await client.PutJsonAsync(path, jsonRequest);
+            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal("BRAND_NOT_FOUND", jsonResponse.Error);
+        }
+
+        [Fact]
         public async Task ShouldRespond404ForInexistentId()
         {
             var brand = new Brand().Build();

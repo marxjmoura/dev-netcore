@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Models.Brands;
+using Developing.Tests.Factories.Brands;
 using Developing.Tests.Fakes;
 using Xunit;
 
@@ -20,8 +21,8 @@ namespace Developing.Tests.Functional.Brands
         [Fact]
         public async Task ShouldListOrderedByName()
         {
-            var brand1 = new Brand { Name = "Z Brand" };
-            var brand2 = new Brand { Name = "A Brand" };
+            var brand1 = new Brand().WithName("Z Brand");
+            var brand2 = new Brand().WithName("A Brand");
 
             _server.Database.Brands.AddRange(brand1, brand2);
             await _server.Database.SaveChangesAsync();

@@ -10,5 +10,12 @@ namespace Developing.Tests.Factories.Brands
 
             return brand;
         }
+
+        public static Brand WithName(this Brand brand, string name)
+        {
+            brand.Name = name;
+
+            return brand;
+        }
     }
 }

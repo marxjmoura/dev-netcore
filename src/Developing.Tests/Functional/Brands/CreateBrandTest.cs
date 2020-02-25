@@ -42,7 +42,7 @@ namespace Developing.Tests.Functional.Brands
             await _server.Database.SaveChangesAsync();
 
             var path = "/brands";
-            var jsonRequest = new SaveBrandJson { Name = brand.Name };
+            var jsonRequest = new SaveBrandJson().WithName(brand.Name);
             var client = new FakeApiClient(_server);
             var response = await client.PostJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);

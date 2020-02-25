@@ -49,15 +49,6 @@ namespace Developing.API.Controllers
         [HttpPost, Route("")]
         public async Task<IActionResult> Create([FromBody] SaveModelJson json)
         {
-            var brandExists = await _dbContext.Brands
-                .WhereId(json.BrandId.Value)
-                .AnyAsync();
-
-            if (!brandExists)
-            {
-                return new BrandNotFoundError();
-            }
-
             var nameExists = await _dbContext.Models
                 .WhereNameEqual(json.Name)
                 .AnyAsync();
@@ -65,6 +56,15 @@ namespace Developing.API.Controllers
             if (nameExists)
             {
                 return new DuplicateModelName();
+            }
+
+            var brandExists = await _dbContext.Brands
+                .WhereId(json.BrandId.Value)
+                .AnyAsync();
+
+            if (!brandExists)
+            {
+                return new BrandNotFoundError();
             }
 
             var model = json.MapTo(new Model());
