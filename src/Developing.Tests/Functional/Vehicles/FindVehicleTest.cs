@@ -17,10 +17,12 @@ namespace Developing.Tests.Functional.Vehicles
     public sealed class FindVehicleTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public FindVehicleTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -37,10 +39,8 @@ namespace Developing.Tests.Functional.Vehicles
             await _server.Database.SaveChangesAsync();
 
             var path = $"/vehicles/{vehicle.Id}";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<VehicleJson>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<VehicleJson>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(brand.Name, jsonResponse.Brand);
@@ -55,10 +55,8 @@ namespace Developing.Tests.Functional.Vehicles
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/vehicles/1";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("VEHICLE_NOT_FOUND", jsonResponse.Error);

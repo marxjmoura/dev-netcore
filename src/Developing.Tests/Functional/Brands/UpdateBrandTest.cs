@@ -13,10 +13,12 @@ namespace Developing.Tests.Functional.Brands
     public sealed class UpdateBrandTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public UpdateBrandTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -29,10 +31,8 @@ namespace Developing.Tests.Functional.Brands
 
             var path = $"/brands/{brand.Id}";
             var jsonRequest = new SaveBrandJson().Build();
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PutJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<BrandJson>(response);
+            var response = await _client.PutJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<BrandJson>(response);
 
             await _server.Database.Entry(brand).ReloadAsync();
 
@@ -51,10 +51,8 @@ namespace Developing.Tests.Functional.Brands
 
             var path = $"/brands/{brand1.Id}";
             var jsonRequest = new SaveBrandJson().WithName(brand2.Name);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PutJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+            var response = await _client.PutJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 
             Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
             Assert.Equal("DUPLICATE_BRAND_NAME", jsonResponse.Error);
@@ -65,10 +63,8 @@ namespace Developing.Tests.Functional.Brands
         {
             var path = "/brands/1";
             var jsonRequest = new SaveBrandJson().Build();
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PutJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.PutJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("BRAND_NOT_FOUND", jsonResponse.Error);

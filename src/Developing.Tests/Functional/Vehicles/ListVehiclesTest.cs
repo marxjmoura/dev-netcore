@@ -16,10 +16,12 @@ namespace Developing.Tests.Functional.Vehicles
     public sealed class ListVehiclesTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public ListVehiclesTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server);
         }
 
         [Fact]
@@ -37,9 +39,8 @@ namespace Developing.Tests.Functional.Vehicles
             await _server.Database.SaveChangesAsync();
 
             var path = "/vehicles";
-            var client = new FakeApiClient(_server);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<VehicleJson[]>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<VehicleJson[]>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(vehicle2.Id, jsonResponse.First().Id);
@@ -62,9 +63,8 @@ namespace Developing.Tests.Functional.Vehicles
             await _server.Database.SaveChangesAsync();
 
             var path = $"/vehicles?modelId={model1.Id}";
-            var client = new FakeApiClient(_server);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<VehicleJson[]>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<VehicleJson[]>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains(jsonResponse, json => json.Model == model1.Name);

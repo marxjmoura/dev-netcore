@@ -14,10 +14,12 @@ namespace Developing.Tests.Functional.Brands
     public sealed class CreateBrandTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public CreateBrandTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -25,10 +27,8 @@ namespace Developing.Tests.Functional.Brands
         {
             var path = "/brands";
             var jsonRequest = new SaveBrandJson().Build();
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<BrandJson>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<BrandJson>(response);
             var brand = await _server.Database.Brands.SingleAsync();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -45,10 +45,8 @@ namespace Developing.Tests.Functional.Brands
 
             var path = "/brands";
             var jsonRequest = new SaveBrandJson().WithName(brand.Name);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 
             Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
             Assert.Equal("DUPLICATE_BRAND_NAME", jsonResponse.Error);

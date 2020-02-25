@@ -16,10 +16,12 @@ namespace Developing.Tests.Functional.Models
     public sealed class CreateModelTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public CreateModelTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -32,10 +34,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = "/models";
             var jsonRequest = new SaveModelJson().To(brand);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<ModelJson>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<ModelJson>(response);
             var model = await _server.Database.Models.SingleAsync();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -55,10 +55,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = "/models";
             var jsonRequest = new SaveModelJson().To(brand).WithName(model.Name);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 
             Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
             Assert.Equal("DUPLICATE_MODEL_NAME", jsonResponse.Error);
@@ -71,10 +69,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = "/models";
             var jsonRequest = new SaveModelJson().To(unsavedBrand);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("BRAND_NOT_FOUND", jsonResponse.Error);

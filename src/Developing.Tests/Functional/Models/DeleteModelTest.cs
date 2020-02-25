@@ -17,10 +17,12 @@ namespace Developing.Tests.Functional.Models
     public sealed class DeleteModelTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public DeleteModelTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -35,9 +37,7 @@ namespace Developing.Tests.Functional.Models
             await _server.Database.SaveChangesAsync();
 
             var path = $"/models/{model.Id}";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.DeleteAsync(path);
+            var response = await _client.DeleteAsync(path);
             var hasBeenDeleted = !await _server.Database.Models
                 .WhereId(model.Id)
                 .AnyAsync();
@@ -60,10 +60,8 @@ namespace Developing.Tests.Functional.Models
             await _server.Database.SaveChangesAsync();
 
             var path = $"/models/{model.Id}";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.DeleteAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+            var response = await _client.DeleteAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 
             Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
             Assert.Equal("MODEL_HAS_VEHICLES", jsonResponse.Error);
@@ -73,10 +71,8 @@ namespace Developing.Tests.Functional.Models
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/models/1";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.DeleteAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.DeleteAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("MODEL_NOT_FOUND", jsonResponse.Error);

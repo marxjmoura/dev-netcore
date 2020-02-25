@@ -17,10 +17,12 @@ namespace Developing.Tests.Functional.Vehicles
     public sealed class DeleteVehicleTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public DeleteVehicleTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -37,9 +39,7 @@ namespace Developing.Tests.Functional.Vehicles
             await _server.Database.SaveChangesAsync();
 
             var path = $"/vehicles/{vehicle.Id}";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.DeleteAsync(path);
+            var response = await _client.DeleteAsync(path);
             var hasBeenDeleted = !await _server.Database.Vehicles
                 .WhereId(vehicle.Id)
                 .AnyAsync();
@@ -52,10 +52,8 @@ namespace Developing.Tests.Functional.Vehicles
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/vehicles/1";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.DeleteAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.DeleteAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("VEHICLE_NOT_FOUND", jsonResponse.Error);

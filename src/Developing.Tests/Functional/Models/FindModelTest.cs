@@ -15,10 +15,12 @@ namespace Developing.Tests.Functional.Models
     public sealed class FindModelTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public FindModelTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -33,10 +35,8 @@ namespace Developing.Tests.Functional.Models
             await _server.Database.SaveChangesAsync();
 
             var path = $"/models/{model.Id}";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<ModelJson>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<ModelJson>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(model.Id, jsonResponse.Id);
@@ -48,10 +48,8 @@ namespace Developing.Tests.Functional.Models
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/models/1";
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("MODEL_NOT_FOUND", jsonResponse.Error);

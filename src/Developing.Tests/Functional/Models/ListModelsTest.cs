@@ -14,10 +14,12 @@ namespace Developing.Tests.Functional.Models
     public sealed class ListModelsTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public ListModelsTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server);
         }
 
         [Fact]
@@ -33,9 +35,8 @@ namespace Developing.Tests.Functional.Models
             await _server.Database.SaveChangesAsync();
 
             var path = "/models";
-            var client = new FakeApiClient(_server);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<ModelJson[]>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<ModelJson[]>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(model2.Id, jsonResponse.First().Id);
@@ -56,9 +57,8 @@ namespace Developing.Tests.Functional.Models
             await _server.Database.SaveChangesAsync();
 
             var path = $"/models?brandId={brand1.Id}";
-            var client = new FakeApiClient(_server);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<ModelJson[]>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<ModelJson[]>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains(jsonResponse, json => json.Brand == brand1.Name);

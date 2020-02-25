@@ -12,10 +12,12 @@ namespace Developing.Tests.Functional.Brands
     public sealed class ListBrandsTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public ListBrandsTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server);
         }
 
         [Fact]
@@ -28,9 +30,8 @@ namespace Developing.Tests.Functional.Brands
             await _server.Database.SaveChangesAsync();
 
             var path = "/brands";
-            var client = new FakeApiClient(_server);
-            var response = await client.GetAsync(path);
-            var jsonResponse = await client.ReadAsJsonAsync<BrandJson[]>(response);
+            var response = await _client.GetAsync(path);
+            var jsonResponse = await _client.ReadAsJsonAsync<BrandJson[]>(response);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(brand2.Id, jsonResponse.First().Id);

@@ -17,10 +17,12 @@ namespace Developing.Tests.Functional.Vehicles
     public sealed class CreateVehicleTest
     {
         private readonly FakeApiServer _server;
+        private readonly FakeApiClient _client;
 
         public CreateVehicleTest()
         {
             _server = new FakeApiServer();
+            _client = new FakeApiClient(_server, new ApiToken(_server.JwtOptions));
         }
 
         [Fact]
@@ -36,10 +38,8 @@ namespace Developing.Tests.Functional.Vehicles
 
             var path = "/vehicles";
             var jsonRequest = new SaveVehicleJson().To(model);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<VehicleJson>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<VehicleJson>(response);
             var vehicle = await _server.Database.Vehicles.SingleAsync();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -56,10 +56,8 @@ namespace Developing.Tests.Functional.Vehicles
 
             var path = "/vehicles";
             var jsonRequest = new SaveVehicleJson().To(unsavedModel);
-            var token = new ApiToken(_server.JwtOptions);
-            var client = new FakeApiClient(_server, token);
-            var response = await client.PostJsonAsync(path, jsonRequest);
-            var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
+            var response = await _client.PostJsonAsync(path, jsonRequest);
+            var jsonResponse = await _client.ReadAsJsonAsync<NotFoundError>(response);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.Equal("MODEL_NOT_FOUND", jsonResponse.Error);
