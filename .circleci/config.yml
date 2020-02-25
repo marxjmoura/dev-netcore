@@ -31,13 +31,13 @@ jobs:
       dotnet_version:
         type: string
     executor: ubuntu
-    working_directory: ~/project/<< parameters.api_base_dir >>
+    working_directory: ~/project
     steps:
       - checkout:
           path: ~/project
       - run: sudo sysctl -n -w fs.inotify.max_user_instances=512
-      - run: ~/project/tools/install-dotnet.sh << parameters.dotnet_version >>
-      - run: ~/project/tools/test.sh
+      - run: ./tools/install-dotnet.sh << parameters.dotnet_version >>
+      - run: ./tools/test.sh
       - codecov:
           file: << parameters.api_tests_dir >>/coverage/opencover.xml
       - store_artifacts:
