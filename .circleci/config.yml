@@ -1,0 +1,56 @@
+version : 2.1
+
+commands:
+  codecov:
+    parameters:
+      file:
+        type: string
+    steps:
+      - run:
+          name: Download Codecov script
+          command: curl -s https://codecov.io/bash > ./codecov
+      - run:
+          name: Make Codecov script executable
+          command: chmod +x ./codecov
+      - run:
+          name: Send coverage report
+          command: ./codecov -f << parameters.file >> -t $CODECOV_TOKEN
+
+executors:
+  ubuntu:
+    machine:
+      image: circleci/classic:latest
+
+jobs:
+  build_api:
+    parameters:
+      api_base_dir:
+        type: string
+      api_tests_dir:
+        type: string
+      dotnet_version:
+        type: string
+    executor: ubuntu
+    working_directory: ~/project/<< parameters.api_base_dir >>
+    steps:
+      - checkout:
+          path: ~/project
+      - run: sudo sysctl -n -w fs.inotify.max_user_instances=512
+      - run: sudo apt-get update && sudo apt-get install libgdiplus
+      - run: ~/project/tools/install-dotnet.sh << parameters.dotnet_version >>
+      - run: ./tools/test.sh
+      - codecov:
+          file: << parameters.api_tests_dir >>/coverage/opencover.xml
+      - store_artifacts:
+          path: << parameters.api_tests_dir >>/coverage/report/summary.htm
+          destination: << parameters.api_base_dir >>/coverage-report.htm
+
+workflows:
+  version: 2.1
+  rest_api:
+    jobs:
+      - build_api:
+          name: build-rest-api
+          api_base_dir: src/Developing.API
+          api_tests_dir: src/Developing.Tests
+          dotnet_version: "3.1.100"
