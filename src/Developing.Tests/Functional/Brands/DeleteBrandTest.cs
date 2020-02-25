@@ -40,7 +40,7 @@ namespace Developing.Tests.Functional.Brands
         }
 
         [Fact]
-        public async Task ShouldRespond422WhenHaveModels()
+        public async Task ShouldRespond422WhenHasModels()
         {
             var brand = new Brand().Build();
             var model = new Model().To(brand);
