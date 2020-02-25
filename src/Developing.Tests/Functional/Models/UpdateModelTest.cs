@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using Developing.API.Authorization;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Models;
@@ -34,7 +35,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = $"/models/{model.Id}";
             var jsonRequest = new SaveModelJson().To(brand2);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<ModelJson>(response);
 
@@ -58,7 +60,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = $"/models/{model1.Id}";
             var jsonRequest = new SaveModelJson().To(brand).WithName(model2.Name);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 
@@ -80,7 +83,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = $"/models/{model.Id}";
             var jsonRequest = new SaveModelJson().To(unsavedBrand);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
 
@@ -98,7 +102,8 @@ namespace Developing.Tests.Functional.Models
 
             var path = "/models/1";
             var jsonRequest = new SaveModelJson().To(brand);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
 

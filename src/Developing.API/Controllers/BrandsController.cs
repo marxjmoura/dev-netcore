@@ -3,6 +3,7 @@ using Developing.API.Infrastructure.Database.DataModel;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Models.Brands;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,7 +34,7 @@ namespace Developing.API.Controllers
             return new BrandJson(brand);
         }
 
-        [HttpGet, Route("")]
+        [HttpGet, Route(""), AllowAnonymous]
         public async Task<IActionResult> List()
         {
             var brands = await _dbContext.Brands

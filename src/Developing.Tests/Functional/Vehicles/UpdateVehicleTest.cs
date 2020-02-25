@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using Developing.API.Authorization;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Infrastructure.Database.DataModel.Vehicles;
@@ -38,7 +39,8 @@ namespace Developing.Tests.Functional.Vehicles
 
             var path = $"/vehicles/{vehicle.Id}";
             var jsonRequest = new SaveVehicleJson().To(model2);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<VehicleJson>(response);
 
@@ -67,7 +69,8 @@ namespace Developing.Tests.Functional.Vehicles
 
             var path = $"/vehicles/{vehicle.Id}";
             var jsonRequest = new SaveVehicleJson().To(unsavedModel);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
 
@@ -88,7 +91,8 @@ namespace Developing.Tests.Functional.Vehicles
 
             var path = "/vehicles/1";
             var jsonRequest = new SaveVehicleJson().To(model);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PutJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
 

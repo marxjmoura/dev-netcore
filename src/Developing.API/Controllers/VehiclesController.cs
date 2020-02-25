@@ -4,6 +4,7 @@ using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Infrastructure.Database.DataModel.Vehicles;
 using Developing.API.Models.Models;
 using Developing.API.Models.Vehicles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,7 +38,7 @@ namespace Developing.API.Controllers
             return new VehicleJson(vehicle);
         }
 
-        [HttpGet, Route("")]
+        [HttpGet, Route(""), AllowAnonymous]
         public async Task<IActionResult> List([FromQuery] VehicleListQuery query)
         {
             var vehicles = await _dbContext.Vehicles

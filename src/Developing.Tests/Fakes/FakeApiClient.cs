@@ -1,6 +1,8 @@
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Developing.API.Authorization;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 
@@ -10,9 +12,15 @@ namespace Developing.Tests.Fakes
     {
         private readonly HttpClient _client;
 
-        public FakeApiClient(TestServer server)
+        public FakeApiClient(TestServer server, ApiToken token = null)
         {
             _client = server.CreateClient();
+
+            if (token != null)
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token.ToString());
+            }
         }
 
         public async Task<HttpResponseMessage> GetAsync(string requestUri)

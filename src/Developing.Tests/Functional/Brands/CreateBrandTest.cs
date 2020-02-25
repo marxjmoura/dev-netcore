@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using Developing.API.Authorization;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Models;
 using Developing.API.Models.Brands;
@@ -24,7 +25,8 @@ namespace Developing.Tests.Functional.Brands
         {
             var path = "/brands";
             var jsonRequest = new SaveBrandJson().Build();
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PostJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<BrandJson>(response);
             var brand = await _server.Database.Brands.SingleAsync();
@@ -43,7 +45,8 @@ namespace Developing.Tests.Functional.Brands
 
             var path = "/brands";
             var jsonRequest = new SaveBrandJson().WithName(brand.Name);
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.PostJsonAsync(path, jsonRequest);
             var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 

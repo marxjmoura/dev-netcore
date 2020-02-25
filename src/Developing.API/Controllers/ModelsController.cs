@@ -5,6 +5,7 @@ using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Infrastructure.Database.DataModel.Vehicles;
 using Developing.API.Models.Brands;
 using Developing.API.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,7 @@ namespace Developing.API.Controllers
             return new ModelJson(model);
         }
 
-        [HttpGet, Route("")]
+        [HttpGet, Route(""), AllowAnonymous]
         public async Task<IActionResult> List([FromQuery] ModelListQuery query)
         {
             var models = await _dbContext.Models

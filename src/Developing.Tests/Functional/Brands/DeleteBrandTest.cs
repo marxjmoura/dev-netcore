@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using Developing.API.Authorization;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Infrastructure.Database.DataModel.Models;
 using Developing.API.Models;
@@ -29,7 +30,8 @@ namespace Developing.Tests.Functional.Brands
             await _server.Database.SaveChangesAsync();
 
             var path = $"/brands/{brand.Id}";
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.DeleteAsync(path);
             var hasBeenDeleted = !await _server.Database.Brands
                 .WhereId(brand.Id)
@@ -51,7 +53,8 @@ namespace Developing.Tests.Functional.Brands
             await _server.Database.SaveChangesAsync();
 
             var path = $"/brands/{brand.Id}";
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.DeleteAsync(path);
             var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
 
@@ -63,7 +66,8 @@ namespace Developing.Tests.Functional.Brands
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/brands/1";
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.DeleteAsync(path);
             var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
 

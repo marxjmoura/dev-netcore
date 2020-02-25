@@ -2,8 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 using Developing.API.Authorization;
 using Developing.API.Filters;
 using Developing.API.Infrastructure.Database.DataModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,11 +35,17 @@ namespace Developing.API
 
             services.AddControllers(options =>
             {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
                 options.Filters.Add(new RequestValidationFilter());
             })
             .AddNewtonsoftJson();
 
             services.AddDefaultCorsPolicy();
+            services.AddJwtAuthentication(_configuration.GetSection("JWT"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -49,6 +57,8 @@ namespace Developing.API
 
             app.UseCors();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }

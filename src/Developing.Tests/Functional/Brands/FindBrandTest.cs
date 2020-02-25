@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using Developing.API.Authorization;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Models;
 using Developing.API.Models.Brands;
@@ -27,7 +28,8 @@ namespace Developing.Tests.Functional.Brands
             await _server.Database.SaveChangesAsync();
 
             var path = $"/brands/{brand.Id}";
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.GetAsync(path);
             var jsonResponse = await client.ReadAsJsonAsync<BrandJson>(response);
 
@@ -40,7 +42,8 @@ namespace Developing.Tests.Functional.Brands
         public async Task ShouldRespond404ForInexistentId()
         {
             var path = "/brands/1";
-            var client = new FakeApiClient(_server);
+            var token = new ApiToken(_server.JwtOptions);
+            var client = new FakeApiClient(_server, token);
             var response = await client.GetAsync(path);
             var jsonResponse = await client.ReadAsJsonAsync<NotFoundError>(response);
 
