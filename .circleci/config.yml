@@ -36,7 +36,6 @@ jobs:
       - checkout:
           path: ~/project
       - run: sudo sysctl -n -w fs.inotify.max_user_instances=512
-      - run: sudo apt-get update && sudo apt-get install libgdiplus
       - run: ~/project/tools/install-dotnet.sh << parameters.dotnet_version >>
       - run: ~/project/tools/test.sh
       - codecov:
