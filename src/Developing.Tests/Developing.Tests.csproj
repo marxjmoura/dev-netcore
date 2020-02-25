@@ -17,6 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="altcover.dotnet" Version="6.7.750" />
-    <PackageReference Include="dotnet-reportgenerator-cli" Version="4.4.7" />
+    <DotNetCliToolReference Include="dotnet-reportgenerator-cli" Version="4.5.0" />
   </ItemGroup>
 </Project>
