@@ -2,9 +2,11 @@ using System.Net;
 using System.Threading.Tasks;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Infrastructure.Database.DataModel.Models;
+using Developing.API.Infrastructure.Database.DataModel.Vehicles;
 using Developing.API.Models;
 using Developing.Tests.Factories.Brands;
 using Developing.Tests.Factories.Models;
+using Developing.Tests.Factories.Vehicles;
 using Developing.Tests.Fakes;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -40,6 +42,28 @@ namespace Developing.Tests.Functional.Models
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.True(hasBeenDeleted);
+        }
+
+        [Fact]
+        public async Task ShouldRespond422WhenHasVehicles()
+        {
+            var brand = new Brand().Build();
+            var model = new Model().To(brand);
+            var vehicle = new Vehicle().To(model);
+
+            _server.Database.Brands.Add(brand);
+            _server.Database.Models.Add(model);
+            _server.Database.Vehicles.Add(vehicle);
+
+            await _server.Database.SaveChangesAsync();
+
+            var path = $"/models/{model.Id}";
+            var client = new FakeApiClient(_server);
+            var response = await client.DeleteAsync(path);
+            var jsonResponse = await client.ReadAsJsonAsync<UnprocessableEntityError>(response);
+
+            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+            Assert.Equal("MODEL_HAS_VEHICLES", jsonResponse.Error);
         }
 
         [Fact]

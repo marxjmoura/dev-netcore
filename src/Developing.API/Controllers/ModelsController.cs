@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Developing.API.Infrastructure.Database.DataModel;
 using Developing.API.Infrastructure.Database.DataModel.Brands;
 using Developing.API.Infrastructure.Database.DataModel.Models;
+using Developing.API.Infrastructure.Database.DataModel.Vehicles;
 using Developing.API.Models.Brands;
 using Developing.API.Models.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -123,6 +124,15 @@ namespace Developing.API.Controllers
             if (model == null)
             {
                 return new ModelNotFoundError();
+            }
+
+            var hasVehicles = await _dbContext.Vehicles
+                .WhereModelId(id)
+                .AnyAsync();
+
+            if (hasVehicles)
+            {
+                return new ModelHasVehiclesError();
             }
 
             _dbContext.Models.Remove(model);
