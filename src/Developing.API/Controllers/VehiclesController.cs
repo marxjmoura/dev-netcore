@@ -55,16 +55,17 @@ namespace Developing.API.Controllers
         [HttpPost, Route("")]
         public async Task<IActionResult> Create([FromBody] SaveVehicleJson json)
         {
-            var modelExists = await _dbContext.Models
-                .WhereId(json.ModelId.Value)
-                .AnyAsync();
+            var vehicle = json.MapTo(new Vehicle());
 
-            if (!modelExists)
+            vehicle.Model = await _dbContext.Models
+                .WhereId(vehicle.ModelId)
+                .IncludeBrand()
+                .SingleOrDefaultAsync();
+
+            if (vehicle.Model == null)
             {
                 return new ModelNotFoundError();
             }
-
-            var vehicle = json.MapTo(new Vehicle());
 
             _dbContext.Add(vehicle);
 
@@ -85,16 +86,17 @@ namespace Developing.API.Controllers
                 return new VehicleNotFoundError();
             }
 
-            var modelExists = await _dbContext.Models
-                .WhereId(json.ModelId.Value)
-                .AnyAsync();
+            json.MapTo(vehicle);
 
-            if (!modelExists)
+            vehicle.Model = await _dbContext.Models
+                .WhereId(vehicle.ModelId)
+                .IncludeBrand()
+                .SingleOrDefaultAsync();
+
+            if (vehicle.Model == null)
             {
                 return new ModelNotFoundError();
             }
-
-            json.MapTo(vehicle);
 
             await _dbContext.SaveChangesAsync();
 
