@@ -52,8 +52,10 @@ namespace Developing.API.Controllers
         [HttpPost, Route("")]
         public async Task<IActionResult> Create([FromBody] SaveModelJson json)
         {
+            var model = json.MapTo(new Model());
+
             var nameExists = await _dbContext.Models
-                .WhereNameEqual(json.Name)
+                .WhereNameEqual(model.Name)
                 .AnyAsync();
 
             if (nameExists)
@@ -61,16 +63,14 @@ namespace Developing.API.Controllers
                 return new DuplicateModelName();
             }
 
-            var brandExists = await _dbContext.Brands
-                .WhereId(json.BrandId.Value)
-                .AnyAsync();
+            model.Brand = await _dbContext.Brands
+                .WhereId(model.BrandId)
+                .SingleOrDefaultAsync();
 
-            if (!brandExists)
+            if (model.Brand == null)
             {
                 return new BrandNotFoundError();
             }
-
-            var model = json.MapTo(new Model());
 
             _dbContext.Add(model);
 
@@ -91,8 +91,10 @@ namespace Developing.API.Controllers
                 return new ModelNotFoundError();
             }
 
+            json.MapTo(model);
+
             var nameExists = await _dbContext.Models
-                .WhereNameEqual(json.Name)
+                .WhereNameEqual(model.Name)
                 .WhereIdNotEqual(id)
                 .AnyAsync();
 
@@ -101,16 +103,14 @@ namespace Developing.API.Controllers
                 return new DuplicateModelName();
             }
 
-            var brandExists = await _dbContext.Brands
-                .WhereId(json.BrandId.Value)
-                .AnyAsync();
+            model.Brand = await _dbContext.Brands
+                .WhereId(model.BrandId)
+                .SingleOrDefaultAsync();
 
-            if (!brandExists)
+            if (model.Brand == null)
             {
                 return new BrandNotFoundError();
             }
-
-            json.MapTo(model);
 
             await _dbContext.SaveChangesAsync();
 
