@@ -90,7 +90,7 @@ dotnet tool install --global dotnet-ef --version 3.1.2
 export PATH="$PATH:$HOME/.dotnet/tools"
 ```
 
-4. Run the migrations from directory `src/Developing.API`.
+4. Run the migrations from `src/Developing.API` directory.
 
 ```bash
 dotnet ef database update
@@ -144,7 +144,7 @@ For `ADMIN` access use the following content in the authorization request header
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOi8vYXBpLmxvY2FsLyIsImF1ZCI6Imh0dHA6Ly9jbGllbnQubG9jYWwvIn0.83rGjbSN-2V5dK7OEWdR8NbMajHJjSjaHAew4q3CGQw
 ```
 
-Brands:
+### Brands
 
 | Method   | Path             | Access level    | Description                                |
 | :------: | ---------------- | :-------------: | ------------------------------------------ |
@@ -162,7 +162,7 @@ Request body for POST and PUT:
 }
 ```
 
-Models:
+### Models
 
 | Method   | Path                     | Access level    | Description                                                               |
 | :------: | ------------------------ | :-------------: | ------------------------------------------------------------------------- |
@@ -181,7 +181,7 @@ Request body for POST and PUT:
 }
 ```
 
-Vehicles:
+### Vehicles
 
 | Method   | Path                       | Access level    | Description                                                                  |
 | :------: | -------------------------- | :-------------: | ---------------------------------------------------------------------------- |
