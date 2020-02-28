@@ -1,8 +1,8 @@
 namespace Developing.API.Models.Models
 {
-    public class DuplicateModelName : UnprocessableEntityError
+    public class DuplicateModelNameError : UnprocessableEntityError
     {
-        public DuplicateModelName()
+        public DuplicateModelNameError()
         {
             Error = "DUPLICATE_MODEL_NAME";
         }

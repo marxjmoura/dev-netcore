@@ -1,8 +1,8 @@
 namespace Developing.API.Models.Brands
 {
-    public sealed class DuplicateBrandName : UnprocessableEntityError
+    public sealed class DuplicateBrandNameError : UnprocessableEntityError
     {
-        public DuplicateBrandName()
+        public DuplicateBrandNameError()
         {
             Error = "DUPLICATE_BRAND_NAME";
         }

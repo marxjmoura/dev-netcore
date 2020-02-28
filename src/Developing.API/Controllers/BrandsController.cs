@@ -53,7 +53,7 @@ namespace Developing.API.Controllers
 
             if (nameExists)
             {
-                return new DuplicateBrandName();
+                return new DuplicateBrandNameError();
             }
 
             var brand = json.MapTo(new Brand());
@@ -84,7 +84,7 @@ namespace Developing.API.Controllers
 
             if (nameExists)
             {
-                return new DuplicateBrandName();
+                return new DuplicateBrandNameError();
             }
 
             json.MapTo(brand);

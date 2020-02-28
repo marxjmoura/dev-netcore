@@ -60,7 +60,7 @@ namespace Developing.API.Controllers
 
             if (nameExists)
             {
-                return new DuplicateModelName();
+                return new DuplicateModelNameError();
             }
 
             model.Brand = await _dbContext.Brands
@@ -100,7 +100,7 @@ namespace Developing.API.Controllers
 
             if (nameExists)
             {
-                return new DuplicateModelName();
+                return new DuplicateModelNameError();
             }
 
             model.Brand = await _dbContext.Brands
